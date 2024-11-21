@@ -16,11 +16,17 @@ $stmt = $pdo->prepare($query);
 $stmt->execute([$seller_id]);
 $shop = $stmt->fetch();
 
-// Fetch items listed by the seller, including image
-$query_items = "SELECT * FROM items WHERE shop_id = ?";
+$query_items = "
+    SELECT i.*, GROUP_CONCAT(im.image_url) AS image_urls
+    FROM items i
+    LEFT JOIN item_images im ON i.item_id = im.item_id
+    WHERE i.shop_id = ?
+    GROUP BY i.item_id
+";
 $stmt_items = $pdo->prepare($query_items);
 $stmt_items->execute([$shop['shop_id']]);
 $items = $stmt_items->fetchAll();
+
 
 // Fetch orders related to the seller, including the buyer's name
 $query_orders = "SELECT o.*, oi.*, i.name, u.username AS buyer_name FROM orders o
@@ -32,86 +38,78 @@ $stmt_orders = $pdo->prepare($query_orders);
 $stmt_orders->execute([$shop['shop_id']]);
 $orders = $stmt_orders->fetchAll();
 
-// Fetch disputes for this seller
-$query_disputes = "SELECT * FROM disputes d
-                   JOIN orders o ON d.order_id = o.order_id
-                   WHERE o.user_id = ? AND d.status = 'open'";
-$stmt_disputes = $pdo->prepare($query_disputes);
-$stmt_disputes->execute([$seller_id]);
-$disputes = $stmt_disputes->fetchAll();
 ?>
 
 <?php include 'components/header.php'; ?>
 
 <main class="dashboard-content">
-        <section class="welcome">
-            <h2>Welcome to your Dashboard, <?= htmlspecialchars($shop['shop_name']) ?>!</h2>
-            <p>Manage your items, orders, and disputes all in one place.</p>
-        </section>
+    <section class="welcome">
+        <h2>Welcome to your Dashboard, <?= htmlspecialchars($shop['shop_name']) ?>!</h2>
+        <p>View your items, orders, and manage your shop.</p>
+    </section>
 
-        <section class="dashboard-section">
-            <h2>Your Items</h2>
-            <div class="items-list">
-                <?php if ($items): ?>
-                    <?php foreach ($items as $item): ?>
-                        <div class="item-card">
-                            <?php if ($item['image']): ?>
-                                <img src="../uploads/items/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="item-image">
-                            <?php else: ?>
-                                <p>No image available</p>
-                            <?php endif; ?>
-                            <div class="item-info">
-                                <strong><?= htmlspecialchars($item['name']) ?></strong><br>
-                                Price: $<?= number_format($item['price'], 2) ?><br>
-                                Quantity: <?= $item['quantity'] ?><br>
-                                Condition: <?= ucfirst($item['condition']) ?><br>
+    <section class="dashboard-section">
+        <h2>Your Items</h2>
+        <div class="items-list">
+            <?php if ($items): ?>
+                <?php foreach ($items as $item): ?>
+                    <div class="item-card">
+                        <div id="carousel-<?= $item['item_id'] ?>" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <?php
+                                $images = explode(',', $item['image_urls']);
+                                foreach ($images as $index => $image): ?>
+                                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                        <img src="../uploads/items/<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="d-block w-100">
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
                         </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No items listed yet.</p>
-                <?php endif; ?>
-            </div>
-        </section>
+                        <div class="item-info mt-3">
+                            <strong><?= htmlspecialchars($item['name']) ?></strong><br>
+                            Price: $<?= number_format($item['price'], 2) ?><br>
+                            Quantity: <?= $item['quantity'] ?><br>
+                            Condition: <?= ucfirst($item['condition']) ?><br>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No items listed yet.</p>
+            <?php endif; ?>
+        </div>
+    </section>
 
-        <section class="dashboard-section">
-            <h2>Your Orders</h2>
-            <div class="orders-list">
-                <?php if ($orders): ?>
-                    <?php foreach ($orders as $order): ?>
-                        <div class="order-card">
-                            <strong>Buyer: <?= htmlspecialchars($order['buyer_name']) ?></strong><br>
-                            Item: <?= htmlspecialchars($order['name']) ?><br>
-                            Quantity: <?= $order['quantity'] ?><br>
-                            Status: <?= htmlspecialchars($order['order_status']) ?><br>
-                            <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn">View Order Details</a>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No orders yet.</p>
-                <?php endif; ?>
-            </div>
-        </section>
 
-        <section class="dashboard-section">
-            <h2>Open Disputes</h2>
-            <div class="disputes-list">
-                <?php if ($disputes): ?>
-                    <?php foreach ($disputes as $dispute): ?>
-                        <div class="dispute-card">
-                            <strong>Dispute ID: <?= $dispute['dispute_id'] ?></strong><br>
-                            Order ID: <?= $dispute['order_id'] ?><br>
-                            Issue: <?= htmlspecialchars($dispute['issue']) ?><br>
-                            Status: <?= htmlspecialchars($dispute['status']) ?><br>
-                            <a href="view_dispute.php?dispute_id=<?= $dispute['dispute_id'] ?>" class="btn">View Dispute</a>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No open disputes.</p>
-                <?php endif; ?>
-            </div>
-        </section>
-    </main>
+
+    <section class="dashboard-section">
+        <h2>Your Orders</h2>
+        <div class="orders-list">
+            <?php if ($orders): ?>
+                <?php foreach ($orders as $order): ?>
+                    <div class="order-card">
+                        <strong>Buyer: <?= htmlspecialchars($order['buyer_name']) ?></strong><br>
+                        Item: <?= htmlspecialchars($order['name']) ?><br>
+                        Quantity: <?= $order['quantity'] ?><br>
+                        Status: <?= htmlspecialchars($order['order_status']) ?><br>
+                        <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn">View Order Details</a>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No orders yet.</p>
+            <?php endif; ?>
+        </div>
+    </section>
+
+
+</main>
 
 
 <?php include 'components/footer.php'; ?>

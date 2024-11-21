@@ -35,27 +35,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php include 'components/header.php'; ?>
-    <h1>Your Profile</h1>
+<section class="profile-update-section">
+    <h1 class="profile-update-title">Your Profile</h1>
 
-    <form method="POST" action="profile.php">
-        <label for="username">Username:</label><br>
-        <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required><br>
+    <form method="POST" action="profile.php" class="profile-update-form">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required class="form-input">
+        </div>
 
-        <label for="email">Email:</label><br>
-        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required><br>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required class="form-input">
+        </div>
 
-        <label for="phone">Phone:</label><br>
-        <input type="text" name="phone" value="<?= htmlspecialchars($user['phone']) ?>" required><br>
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="text" name="phone" value="<?= htmlspecialchars($user['phone']) ?>" required class="form-input">
+        </div>
 
-        <label for="address">Address:</label><br>
-        <textarea name="address" required><?= htmlspecialchars($user['address']) ?></textarea><br>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea name="address" required class="form-input"><?= htmlspecialchars($user['address']) ?></textarea>
+        </div>
 
-        <label for="first_name">First Name:</label><br>
-        <input type="text" name="first_name" value="<?= htmlspecialchars($user['first_name']) ?>" required><br>
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" name="first_name" value="<?= htmlspecialchars($user['first_name']) ?>" required class="form-input">
+        </div>
 
-        <label for="last_name">Last Name:</label><br>
-        <input type="text" name="last_name" value="<?= htmlspecialchars($user['last_name']) ?>" required><br>
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" name="last_name" value="<?= htmlspecialchars($user['last_name']) ?>" required class="form-input">
+        </div>
 
-        <button type="submit">Update Profile</button>
+        <button type="submit" class="submit-button">Update Profile</button>
     </form>
-    <?php include 'components/footer.php'; ?>
+</section>
+
+<?php include 'components/footer.php'; ?>

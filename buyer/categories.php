@@ -11,12 +11,22 @@ $categories = $stmt->fetchAll();
 
 <?php include 'components/header.php'; ?>
 
-<h2>Categories</h2>
-<ul>
-    <?php foreach ($categories as $category): ?>
-        <li><a href="search.php?category_id=<?= $category['category_id'] ?>"><?= $category['category_name'] ?></a></li>
-    <?php endforeach; ?>
-</ul>
+
+
+<section class="categories-section">
+    <h1 class="categories-title">Categories</h1>
+    <p class="categories-description">Shop quality second-hand items at affordable prices.</p>
+    <a href="categories.php" class="cta-button">View All Categories</a>
+
+    <ul class="categories-list">
+        <?php foreach ($categories as $category): ?>
+            <li class="category-item">
+                <a href="search.php?category_id=<?= $category['category_id'] ?>" class="category-link"><?= $category['category_name'] ?></a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</section>
+
 
 
 <?php include 'components/footer.php'; ?>

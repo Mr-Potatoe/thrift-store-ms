@@ -27,7 +27,7 @@ if (isset($_POST['login'])) {
         } elseif ($user['role'] === 'seller') {
             header("Location: seller/dashboard.php");
         } elseif ($user['role'] === 'buyer') {
-            header("Location: buyer/index.php");
+            header("Location: buyer/dashboard.php");
         }
         exit;
     } else {

@@ -28,54 +28,51 @@ $cart_count = $stmt_cart_count->fetch();
 $item_count = $cart_count['item_count'] ?? 0;
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<?php include 'components/header.php'; ?>
 
-<head>
-    <meta charset="UTF-8">
-    <title><?= htmlspecialchars($item['name']) ?></title>
-    <link rel="stylesheet" href="css/styles.css"> <!-- Link to your CSS file -->
-</head>
+<section class="item-details">
+    <!-- Item Details Section -->
+    <h1 class="item-title"><?= htmlspecialchars($item['name']) ?></h1>
 
-<body>
-    <!-- Navbar -->
-    <nav>
-        <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="categories.php">Categories</a></li>
-            <li><a href="cart.php">Cart (<?= $item_count ?>)</a></li> <!-- Cart with item count -->
-            <li><a href="orders.php">Orders</a></li>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <li><a href="../logout.php">Logout</a></li>
-            <?php else: ?>
-                <li><a href="login.php">Login</a></li>
-            <?php endif; ?>
-        </ul>
-    </nav>
-
-    <h1><?= htmlspecialchars($item['name']) ?></h1>
-
-    <p><?= htmlspecialchars($item['description']) ?></p>
-    <p>Condition: <?= ucfirst($item['condition']) ?></p>
-    <p>Price: $<?= number_format($item['price'], 2) ?></p>
-
-    <h2>Item Images</h2>
-    <div>
-        <?php foreach ($images as $image): ?>
-            <img src="<?= htmlspecialchars($image['image_url']) ?>" alt="Item Image" width="200">
-        <?php endforeach; ?>
+    <div class="item-info">
+        <p class="item-description"><?= htmlspecialchars($item['description']) ?></p>
+        <p class="item-condition"><strong>Condition:</strong> <?= ucfirst($item['condition']) ?></p>
+        <p class="item-price"><strong>Price:</strong> $<?= number_format($item['price'], 2) ?></p>
+        <p class="item-stock"><strong>Available Stock:</strong> <?= $item['quantity'] ?></p>
     </div>
 
-    <p><strong>Available Stock: <?= $item['quantity'] ?></strong></p>
+    <!-- Item Images Gallery (Bootstrap Carousel) -->
+    <section class="item-images-gallery">
+        <h2>Item Images</h2>
+        <div id="itemCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <?php foreach ($images as $index => $image): ?>
+                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                        <img src="../uploads/items/<?= htmlspecialchars($image['image_url']) ?>" alt="Item Image" class="carousel-image d-block w-100">
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#itemCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#itemCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
 
-    <form action="cart.php" method="POST">
-        <input type="hidden" name="item_id" value="<?= $item['item_id'] ?>">
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" min="1" max="<?= $item['quantity'] ?>" value="1" required>
-        <button type="submit">Add to Cart</button>
-    </form>
+    <!-- Add to Cart Section -->
+    <section class="add-to-cart">
+        <form action="cart.php" method="POST" class="cart-form">
+            <input type="hidden" name="item_id" value="<?= $item['item_id'] ?>">
+            <label for="quantity" class="quantity-label">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" max="<?= $item['quantity'] ?>" value="1" required class="quantity-input">
+            <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+        </form>
+    </section>
+</section>
 
-    <?php include 'components/footer.php'; ?>
-</body>
 
-</html>
+<?php include 'components/footer.php'; ?>

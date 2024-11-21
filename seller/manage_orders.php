@@ -67,41 +67,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_order'])) {
     }
 }
 ?>
-
 <?php include 'components/header.php'; ?>
 
 <?php if (isset($error)) {
     echo "<p style='color: red;'>$error</p>";
 } ?>
+
 <main class="dashboard-content">
-<h1>Manage Orders</h1>
-<section class="dashboard-section">
-<h2>Orders</h2>
-<ul>
-    <?php foreach ($orders as $order): ?>
-        <li>
-            <strong>Order ID: <?= $order['order_id'] ?></strong><br>
-            Item: <?= $order['name'] ?><br>
-            Quantity: <?= $order['quantity'] ?><br>
-            Total Price: <?= $order['total_price'] ?><br>
-            Shipping Address: <?= $order['shipping_address'] ?><br>
-            Payment Status: <?= $order['payment_status'] ?><br>
-            Order Status: <?= $order['order_status'] ?><br>
-            <form method="POST" action="manage_orders.php">
-                <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
-                <label for="order_status">Order Status:</label>
-                <select name="order_status" required>
-                    <option value="pending" <?= ($order['order_status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
-                    <option value="shipped" <?= ($order['order_status'] === 'shipped') ? 'selected' : '' ?>>Shipped</option>
-                    <option value="delivered" <?= ($order['order_status'] === 'delivered') ? 'selected' : '' ?>>Delivered</option>
-                    <option value="canceled" <?= ($order['order_status'] === 'canceled') ? 'selected' : '' ?>>Canceled</option>
-                </select><br>
-                <button type="submit" class="btn" name="update_order">Update Order Status</button>
-            </form>
-        </li>
-    <?php endforeach; ?>
-</ul>
-</section>
+    <h1>Manage Orders</h1>
+    <section class="dashboard-section">
+        <h2>Orders</h2>
+        <ul>
+            <?php foreach ($orders as $order): ?>
+                <li class="order-card">
+                    <strong>Order ID: <?= $order['order_id'] ?></strong><br>
+                    Item: <?= $order['name'] ?><br>
+                    Quantity: <?= $order['quantity'] ?><br>
+                    Total Price: $<?= number_format($order['total_price'], 2) ?><br>
+                    Shipping Address: <?= htmlspecialchars($order['shipping_address']) ?><br>
+                    Payment Status: <?= ucfirst($order['payment_status']) ?><br>
+                    Order Status: <?= ucfirst($order['order_status']) ?><br>
+                    
+                    <!-- View Order Details Button -->
+                    <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn">View Order Details</a>
+
+                    <form method="POST" action="manage_orders.php">
+                        <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
+                        <label for="order_status">Order Status:</label>
+                        <select name="order_status" required>
+                            <option value="pending" <?= ($order['order_status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
+                            <option value="shipped" <?= ($order['order_status'] === 'shipped') ? 'selected' : '' ?>>Shipped</option>
+                            <option value="delivered" <?= ($order['order_status'] === 'delivered') ? 'selected' : '' ?>>Delivered</option>
+                            <option value="canceled" <?= ($order['order_status'] === 'canceled') ? 'selected' : '' ?>>Canceled</option>
+                        </select><br>
+                        <button type="submit" class="btn" name="update_order">Update Order Status</button>
+                    </form>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
 </main>
 
 <?php include 'components/footer.php'; ?>

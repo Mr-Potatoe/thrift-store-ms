@@ -19,35 +19,37 @@ $user = $stmt->fetch();
 
 <?php include 'components/header.php'; ?>
 
-<h1>Your Profile</h1>
+<section class="profile-section">
+    <h1 class="profile-title">Your Profile</h1>
 
-<a href="edit_profile.php">Edit Profile</a>
+    <a href="edit_profile.php" class="edit-profile-link">Edit Profile</a>
 
-<table>
-    <tr>
-        <td><strong>Username:</strong></td>
-        <td><?= htmlspecialchars($user['username']) ?></td>
-    </tr>
-    <tr>
-        <td><strong>Email:</strong></td>
-        <td><?= htmlspecialchars($user['email']) ?></td>
-    </tr>
-    <tr>
-        <td><strong>Phone:</strong></td>
-        <td><?= htmlspecialchars($user['phone']) ?></td>
-    </tr>
-    <tr>
-        <td><strong>Address:</strong></td>
-        <td><?= htmlspecialchars($user['address']) ?></td>
-    </tr>
-    <tr>
-        <td><strong>First Name:</strong></td>
-        <td><?= htmlspecialchars($user['first_name']) ?></td>
-    </tr>
-    <tr>
-        <td><strong>Last Name:</strong></td>
-        <td><?= htmlspecialchars($user['last_name']) ?></td>
-    </tr>
-</table>
+    <table class="profile-table">
+        <tr>
+            <td class="profile-table-label"><strong>Username:</strong></td>
+            <td class="profile-table-value"><?= htmlspecialchars($user['username']) ?></td>
+        </tr>
+        <tr>
+            <td class="profile-table-label"><strong>Email:</strong></td>
+            <td class="profile-table-value"><?= htmlspecialchars($user['email']) ?></td>
+        </tr>
+        <tr>
+            <td class="profile-table-label"><strong>Phone:</strong></td>
+            <td class="profile-table-value"><?= htmlspecialchars($user['phone']) ?></td>
+        </tr>
+        <tr>
+            <td class="profile-table-label"><strong>Address:</strong></td>
+            <td class="profile-table-value"><?= htmlspecialchars($user['address']) ?></td>
+        </tr>
+        <tr>
+            <td class="profile-table-label"><strong>First Name:</strong></td>
+            <td class="profile-table-value"><?= htmlspecialchars($user['first_name']) ?></td>
+        </tr>
+        <tr>
+            <td class="profile-table-label"><strong>Last Name:</strong></td>
+            <td class="profile-table-value"><?= htmlspecialchars($user['last_name']) ?></td>
+        </tr>
+    </table>
+</section>
 
 <?php include 'components/footer.php'; ?>

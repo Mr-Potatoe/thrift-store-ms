@@ -18,6 +18,14 @@ $stmt_cart = $pdo->prepare($cart_query);
 $stmt_cart->execute([$_SESSION['user_id']]);
 $cart_items = $stmt_cart->fetchAll();
 
+// Check if cart is empty
+if (empty($cart_items)) {
+    // Redirect to the cart page with a message
+    $_SESSION['message'] = "Your cart is empty. Please add items to your cart before checking out.";
+    header("Location: cart.php");
+    exit;
+}
+
 foreach ($cart_items as $cart_item) {
     $total_price += $cart_item['quantity'] * $cart_item['price'];
 }
@@ -51,16 +59,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
+
 <?php include 'components/header.php'; ?>
 
-<h1>Checkout</h1>
-<form method="POST" action="checkout.php">
-    <label for="shipping_address">Shipping Address:</label><br>
-    <textarea name="shipping_address" required></textarea><br>
+<section class="checkout-section">
+    <h1 class="checkout-title">Checkout</h1>
 
-    <label for="total_price">Total Price:</label><br>
-    <input type="text" name="total_price" required readonly value="<?= $total_price ?>"><br>
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="message"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
+    <?php endif; ?>
 
-    <button type="submit">Place Order</button>
-</form>
+    <form method="POST" action="checkout.php" class="checkout-form">
+        <label for="shipping_address" class="checkout-label">Shipping Address:</label><br>
+        <textarea name="shipping_address" class="checkout-textarea" required></textarea><br>
+
+        <label for="total_price" class="checkout-label">Total Price:</label><br>
+        <input type="text" name="total_price" class="checkout-input" required readonly value="<?= $total_price ?>"><br>
+
+        <button type="submit" class="checkout-button">Place Order</button>
+    </form>
+</section>
+
 <?php include 'components/footer.php'; ?>

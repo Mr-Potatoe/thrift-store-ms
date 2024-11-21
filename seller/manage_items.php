@@ -16,11 +16,17 @@ $stmt = $pdo->prepare($query);
 $stmt->execute([$seller_id]);
 $shop = $stmt->fetch();
 
-// Fetch items listed by the seller
-$query_items = "SELECT * FROM items WHERE shop_id = ?";
+$query_items = "
+    SELECT i.*, GROUP_CONCAT(im.image_url) AS image_urls
+    FROM items i
+    LEFT JOIN item_images im ON i.item_id = im.item_id
+    WHERE i.shop_id = ?
+    GROUP BY i.item_id
+";
 $stmt_items = $pdo->prepare($query_items);
 $stmt_items->execute([$shop['shop_id']]);
 $items = $stmt_items->fetchAll();
+
 
 // Handle delete item action
 if (isset($_GET['delete_item_id'])) {
@@ -40,40 +46,63 @@ if (isset($_GET['delete_item_id'])) {
 <?php include 'components/header.php'; ?>
 
 
-<main class="dashboard-content">
-    <h1>Manage Your Items, <?= htmlspecialchars($shop['shop_name']) ?></h1>
+<main>
+    <h1 style="color: #2d3748; font-size: 2rem; margin-bottom: 20px;">Manage Your Items, <?= htmlspecialchars($shop['shop_name']) ?></h1>
 
     <!-- Items List Section -->
     <div class="dashboard-section">
         <h2>Your Items</h2>
-        <a href="add_item.php" class="btn">add new item</a>
-        <ul>
+        <a href="add_item.php" class="btn">Add New Item</a>
+        <ul class="items-list">
             <?php if ($items): ?>
                 <?php foreach ($items as $item): ?>
-                    <li>
-                        <?php if ($item['image']): ?>
-                            <img src="../uploads/items/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" width="100" height="100">
-                        <?php else: ?>
-                            <p>No image</p>
-                        <?php endif; ?>
-                        <strong><?= htmlspecialchars($item['name']) ?></strong><br>
-                        Price: $<?= number_format($item['price'], 2) ?><br>
-                        Quantity: <?= $item['quantity'] ?><br>
-                        Condition: <?= ucfirst($item['condition']) ?><br>
+                    <li class="item-card">
+                        <!-- Carousel for item images -->
+                        <div id="carousel-<?= $item['item_id'] ?>" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <?php
+                                $images = explode(',', $item['image_urls']);
+                                foreach ($images as $index => $image): ?>
+                                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                        <img src="../uploads/items/<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="d-block w-100">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+
+                        <!-- Item details -->
+                        <div class="item-info">
+                            <strong><?= htmlspecialchars($item['name']) ?></strong><br>
+                            <span>Price: $<?= number_format($item['price'], 2) ?></span><br>
+                            <span>Quantity: <?= $item['quantity'] ?></span><br>
+                            <span>Condition: <?= ucfirst($item['condition']) ?></span><br>
+                        </div>
                         <div class="action-buttons">
                             <a class="btn" href="edit_item.php?item_id=<?= $item['item_id'] ?>">Edit</a>
-                            <a class="btn" href="manage_items.php?delete_item_id=<?= $item['item_id'] ?>" class="delete-button" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
+                            <a class="btn" href="manage_items.php?delete_item_id=<?= $item['item_id'] ?>" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
                         </div>
                     </li>
                 <?php endforeach; ?>
             <?php else: ?>
-                <li>No items listed yet.</li>
+                <li class="item-card">
+                    <div class="item-info">
+                        <strong>No items listed yet.</strong>
+                    </div>
+                </li>
             <?php endif; ?>
         </ul>
     </div>
-
-
 </main>
+
+
 
 <?php include 'components/footer.php'; ?>
 

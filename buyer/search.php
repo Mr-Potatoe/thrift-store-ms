@@ -23,17 +23,23 @@ $items = $stmt->fetchAll();
 ?>
 
 <?php include 'components/header.php'; ?>
-    <h1>Search Results</h1>
-    <form method="GET" action="search.php">
-        <input type="text" name="search_term" placeholder="Search for items" value="<?= htmlspecialchars($search_term) ?>">
-        <button type="submit">Search</button>
+<section class="search-results">
+    <h1 class="search-results-header">Search Results</h1>
+
+    <form method="GET" action="search.php" class="search-form">
+        <input type="text" name="search_term" placeholder="Search for items" value="<?= htmlspecialchars($search_term) ?>" class="search-input">
+        <button type="submit" class="search-button">Search</button>
     </form>
 
-    <ul>
+    <ul class="search-results-list">
         <?php foreach ($items as $item): ?>
-            <li>
-                <a href="view_item.php?item_id=<?= $item['item_id'] ?>"><?= $item['name'] ?></a> - $<?= number_format($item['price'], 2) ?>
+            <li class="search-item">
+                <a href="view_item.php?item_id=<?= $item['item_id'] ?>" class="search-item-link">
+                    <?= $item['name'] ?>
+                </a> - $<?= number_format($item['price'], 2) ?>
             </li>
         <?php endforeach; ?>
     </ul>
-    <?php include 'components/footer.php'; ?>
+</section>
+
+<?php include 'components/footer.php'; ?>

@@ -41,32 +41,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php include 'components/header.php'; ?>
+<section class="feedback-section">
+    <h1 class="feedback-page-title">Leave Feedback</h1>
 
-<h1>Leave Feedback</h1>
+    <form method="POST" action="feedback.php?order_id=<?= $order_id ?>" class="feedback-form">
+        <h3 class="order-items-title">Order Items</h3>
+        <ul class="order-items-list">
+            <?php foreach ($order_items as $order_item): ?>
+                <li class="order-item">
+                    <label for="item_id" class="item-name"><?= $order_item['name'] ?></label>
+                    <input type="radio" name="item_id" value="<?= $order_item['order_item_id'] ?>" required class="item-radio">
+                    <br>
+                    <label for="rating" class="rating-label">Rating:</label>
+                    <select name="rating" required class="rating-select">
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                    </select>
+                    <br>
+                    <label for="comment" class="comment-label">Comment:</label><br>
+                    <textarea name="comment" rows="4" required class="comment-textarea"></textarea><br>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        <button type="submit" class="submit-feedback-btn">Submit Feedback</button>
+    </form>
+</section>
 
-<form method="POST" action="feedback.php?order_id=<?= $order_id ?>">
-    <h3>Order Items</h3>
-    <ul>
-        <?php foreach ($order_items as $order_item): ?>
-            <li>
-                <label for="item_id"><?= $order_item['name'] ?></label>
-                <input type="radio" name="item_id" value="<?= $order_item['order_item_id'] ?>" required> <!-- Changed from order_id to item_id -->
-                <br>
-                <label for="rating">Rating:</label>
-                <select name="rating" required>
-                    <option value="1">1 - Poor</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="3">3 - Good</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="5">5 - Excellent</option>
-                </select>
-                <br>
-                <label for="comment">Comment:</label><br>
-                <textarea name="comment" rows="4" required></textarea><br>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-    <button type="submit">Submit Feedback</button>
-</form>
 
 <?php include 'components/footer.php'; ?>

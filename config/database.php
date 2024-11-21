@@ -4,7 +4,7 @@
 
 // Database credentials
 $host = 'localhost';  // Change to your database host
-$dbname = 'toms';  // The name of your database
+$dbname = 'tel2';  // The name of your database
 $username = 'root';  // Database username
 $password = '';  // Database password (replace with your actual password)
 $port = 3306;

@@ -54,19 +54,26 @@ foreach ($cart_items as $cart_item) {
 ?>
 
 <?php include 'components/header.php'; ?>
-<h1>Your Cart</h1>
+<section class="cart-section">
+    <h1 class="cart-title">Your Cart</h1>
 
-<!-- Cart Items -->
-<ul>
-    <?php foreach ($cart_items as $cart_item): ?>
-        <li>
-            <?= $cart_item['name'] ?> - $<?= number_format($cart_item['price'], 2) ?> x <?= $cart_item['quantity'] ?>
-        </li>
-    <?php endforeach; ?>
-</ul>
+    <!-- Cart Items -->
+    <ul class="cart-items-list">
+        <?php foreach ($cart_items as $cart_item): ?>
+            <li class="cart-item">
+                <span class="cart-item-name"><?= $cart_item['name'] ?></span> 
+                - 
+                <span class="cart-item-price">$<?= number_format($cart_item['price'], 2) ?></span> 
+                x 
+                <span class="cart-item-quantity"><?= $cart_item['quantity'] ?></span>
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
-<!-- Total Price -->
-<h3>Total: $<?= number_format($total_price, 2) ?></h3>
+    <!-- Total Price -->
+    <h3 class="cart-total">Total: $<?= number_format($total_price, 2) ?></h3>
 
-<a href="checkout.php">Proceed to Checkout</a>
+    <a href="checkout.php" class="checkout-button">Proceed to Checkout</a>
+</section>
+
 <?php include 'components/footer.php'; ?>
