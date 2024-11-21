@@ -1,0 +1,196 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.login-box {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9em;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+button.btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+
+button.btn:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.signup-link {
+    font-size: 0.9em;
+    margin-top: 15px;
+}
+
+.signup-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+body {
+font-family: 'Arial', sans-serif;
+background-color: #f4f7f6;
+margin: 0;
+padding: 0;
+}
+header {
+background-color: #333;
+color: white;
+padding: 15px 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+header .logo h1 {
+margin: 0;
+}
+
+nav ul {
+list-style-type: none;
+margin: 0;
+padding: 0;
+display: flex;
+}
+
+nav ul li {
+margin-right: 15px;
+}
+
+nav ul li a {
+color: white;
+text-decoration: none;
+padding: 5px 10px;
+}
+
+nav ul li a:hover {
+background-color: #555;
+border-radius: 5px;
+}
+
+.main-content {
+padding: 20px;
+}
+
+.hero {
+text-align: center;
+margin-top: 50px;
+}
+
+.hero h2 {
+font-size: 2.5em;
+color: #333;
+}
+
+.hero p {
+font-size: 1.2em;
+color: #666;
+}
+
+.cta-buttons {
+margin-top: 20px;
+}
+
+.cta-buttons .btn {
+background-color: #007bff;
+color: white;
+padding: 10px 20px;
+border-radius: 5px;
+text-decoration: none;
+margin: 5px;
+}
+
+.cta-buttons .btn:hover {
+background-color: #0056b3;
+}
+
+.about {
+margin-top: 40px;
+padding: 20px;
+background-color: white;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+background-color: #333;
+color: white;
+padding: 10px 20px;
+text-align: center;
+}
+
+footer a {
+color: white;
+text-decoration: none;
+}
+
+footer a:hover {
+text-decoration: underline;
+}
+
