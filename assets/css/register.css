@@ -113,3 +113,8 @@ body {
     margin-top: 20px;
     display: none;
 }
+
+p {
+    font-size: 1.2em;
+    color: #666;
+    }
