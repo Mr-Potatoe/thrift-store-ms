@@ -43,73 +43,128 @@ $orders = $stmt_orders->fetchAll();
 <?php include 'components/header.php'; ?>
 
 <main class="dashboard-content">
-    <section class="welcome">
-        <h2>Welcome to your Dashboard, <?= htmlspecialchars($shop['shop_name']) ?>!</h2>
-        <p>View your items, orders, and manage your shop.</p>
-    </section>
+    <div class="container mt-5">
+        <!-- Dashboard Welcome Message -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Welcome to your Dashboard, <?= htmlspecialchars($shop['shop_name']) ?>!</h3>
+            </div>
+        </div>
 
-    <section class="dashboard-section">
-        <h2>Your Items</h2>
-        <div class="items-list">
-            <?php if ($items): ?>
-                <?php foreach ($items as $item): ?>
-                    <div class="item-card">
-                        <div id="carousel-<?= $item['item_id'] ?>" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php
-                                $images = explode(',', $item['image_urls']);
-                                foreach ($images as $index => $image): ?>
-                                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                                        <img src="../uploads/items/<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="d-block w-100">
+        <!-- Dashboard Sections -->
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        Manage Items
+                    </div>
+                    <div class="card-body">
+                        <p>Quickly manage your shop items and update inventory.</p>
+                        <a href="manage_items.php" class="btn btn-primary w-100">Go to Manage Items</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Manage Orders
+                    </div>
+                    <div class="card-body">
+                        <p>View and process customer orders efficiently.</p>
+                        <a href="manage_orders.php" class="btn btn-success w-100">Go to Manage Orders</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header bg-warning text-white">
+                        Manage Feedback
+                    </div>
+                    <div class="card-body">
+                        <p>Review feedback and improve your customer service.</p>
+                        <a href="manage_feedback.php" class="btn btn-warning w-100">Go to Manage Feedback</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Your Items -->
+    <section class="dashboard-section mt-5">
+        <div class="container">
+            <h2>Your Items</h2>
+            <div class="row">
+                <?php if ($items): ?>
+                    <?php foreach ($items as $item): ?>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <!-- Carousel for Item Images -->
+                                <div id="carousel-<?= $item['item_id'] ?>" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <?php
+                                        $images = explode(',', $item['image_urls']);
+                                        foreach ($images as $index => $image): ?>
+                                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                                <img src="../uploads/items/<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="d-block w-100">
+                                            </div>
+                                        <?php endforeach; ?>
                                     </div>
-                                <?php endforeach; ?>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                                <!-- Item Information -->
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= htmlspecialchars($item['name']) ?></h5>
+                                    <p class="card-text">Price: PHP. <?= number_format($item['price'], 2) ?></p>
+                                    <p class="card-text">Quantity: <?= $item['quantity'] ?></p>
+                                    <p class="card-text">Condition: <?= ucfirst($item['condition']) ?></p>
+                                </div>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-<?= $item['item_id'] ?>" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
                         </div>
-                        <div class="item-info mt-3">
-                            <strong><?= htmlspecialchars($item['name']) ?></strong><br>
-                            Price: $<?= number_format($item['price'], 2) ?><br>
-                            Quantity: <?= $item['quantity'] ?><br>
-                            Condition: <?= ucfirst($item['condition']) ?><br>
-                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12">
+                        <p>No items listed yet.</p>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No items listed yet.</p>
-            <?php endif; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </section>
 
-
-
-    <section class="dashboard-section">
-        <h2>Your Orders</h2>
-        <div class="orders-list">
-            <?php if ($orders): ?>
-                <?php foreach ($orders as $order): ?>
-                    <div class="order-card">
-                        <strong>Buyer: <?= htmlspecialchars($order['buyer_name']) ?></strong><br>
-                        Item: <?= htmlspecialchars($order['name']) ?><br>
-                        Quantity: <?= $order['quantity'] ?><br>
-                        Status: <?= htmlspecialchars($order['order_status']) ?><br>
-                        <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn">View Order Details</a>
+    <!-- Section: Your Orders -->
+    <section class="dashboard-section mt-5">
+        <div class="container">
+            <h2>Your Orders</h2>
+            <div class="row">
+                <?php if ($orders): ?>
+                    <?php foreach ($orders as $order): ?>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Buyer: <?= htmlspecialchars($order['buyer_name']) ?></h5>
+                                    <p class="card-text">Item: <?= htmlspecialchars($order['name']) ?></p>
+                                    <p class="card-text">Quantity: <?= $order['quantity'] ?></p>
+                                    <p class="card-text">Status: <?= htmlspecialchars($order['order_status']) ?></p>
+                                    <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn btn-info w-100">View Order Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12">
+                        <p>No orders yet.</p>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No orders yet.</p>
-            <?php endif; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </section>
-
 
 </main>
-
 
 <?php include 'components/footer.php'; ?>

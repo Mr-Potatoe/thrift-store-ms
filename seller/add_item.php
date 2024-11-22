@@ -23,17 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $condition = $_POST['condition'];
     $price = $_POST['price'];
     $quantity = $_POST['quantity'];
-    $auction = isset($_POST['auction']) ? 1 : 0;
-    $auction_end_time = $_POST['auction_end_time'] ? $_POST['auction_end_time'] : NULL;
     $category_id = $_POST['category_id'];
 
     if (!isset($error)) {
         try {
             // Insert item into the `items` table
-            $query_item = "INSERT INTO items (shop_id, category_id, name, description, `condition`, price, auction, auction_end_time, quantity) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $query_item = "INSERT INTO items (shop_id, category_id, name, description, `condition`, price, quantity) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt_item = $pdo->prepare($query_item);
-            $stmt_item->execute([$shop['shop_id'], $category_id, $name, $description, $condition, $price, $auction, $auction_end_time, $quantity]);
+            $stmt_item->execute([$shop['shop_id'], $category_id, $name, $description, $condition, $price, $quantity]);
 
             // Get the last inserted item ID
             $item_id = $pdo->lastInsertId();
@@ -94,68 +92,66 @@ $categories = $stmt_categories->fetchAll();
     echo "<p style='color: red;'>$error</p>";
 } ?>
 
-<main class="dashboard-content">
-    <h1>Add New Item</h1>
+<main class="dashboard-content container py-4">
+    <h1 class="text-primary mb-4">Add New Item</h1>
     <section class="dashboard-section">
-        <h2>Item Information</h2>
+        <h2 class="mb-4">Item Information</h2>
         <form method="POST" action="add_item.php" enctype="multipart/form-data" class="item-form">
-            <div class="form-group">
-                <label for="name">Item Name:</label>
-                <input type="text" name="name" id="name" required placeholder="Enter item name">
+            <!-- Item Name -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Item Name:</label>
+                <input type="text" name="name" id="name" class="form-control" required placeholder="Enter item name">
             </div>
 
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea name="description" id="description" required placeholder="Enter item description"></textarea>
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea name="description" id="description" class="form-control" required rows="3" placeholder="Enter item description"></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="condition">Condition:</label>
-                <select name="condition" id="condition" required>
+            <!-- Condition -->
+            <div class="mb-3">
+                <label for="condition" class="form-label">Condition:</label>
+                <select name="condition" id="condition" class="form-select" required>
                     <option value="excellent">Excellent</option>
                     <option value="good">Good</option>
                     <option value="fair">Fair</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="price">Price:</label>
-                <input type="number" name="price" id="price" step="0.01" required placeholder="Enter price">
+            <!-- Price -->
+            <div class="mb-3">
+                <label for="price" class="form-label">Price:</label>
+                <input type="number" name="price" id="price" class="form-control" step="0.01" required placeholder="Enter price">
             </div>
 
-            <div class="form-group">
-                <label for="quantity">Quantity:</label>
-                <input type="number" name="quantity" id="quantity" required placeholder="Enter quantity">
+            <!-- Quantity -->
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" class="form-control" required placeholder="Enter quantity">
             </div>
 
-            <div class="form-group">
-                <label for="auction">Auction:</label>
-                <input type="checkbox" name="auction" id="auction"> Enable Auction
-            </div>
-
-            <div class="form-group">
-                <label for="auction_end_time">Auction End Time:</label>
-                <input type="datetime-local" name="auction_end_time" id="auction_end_time">
-            </div>
-
-            <div class="form-group">
-                <label for="category_id">Category:</label>
-                <select name="category_id" id="category_id" required>
+            <!-- Category -->
+            <div class="mb-3">
+                <label for="category_id" class="form-label">Category:</label>
+                <select name="category_id" id="category_id" class="form-select" required>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?= $category['category_id'] ?>"><?= $category['category_name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="images">Item Images:</label>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple>
+            <!-- Item Images -->
+            <div class="mb-3">
+                <label for="images" class="form-label">Item Images:</label>
+                <input type="file" name="images[]" id="images" class="form-control" accept="image/*" multiple>
             </div>
 
-            <button type="submit" class="btn">Add Item</button>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Add Item</button>
         </form>
     </section>
 </main>
 
-<?php include 'components/footer.php'; ?>
 
+<?php include 'components/footer.php'; ?>

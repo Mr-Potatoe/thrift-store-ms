@@ -22,15 +22,19 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Fetch feedback for the seller's shop with pagination
-$query_feedback = "SELECT f.*, o.user_id AS buyer_id, u.username FROM feedback f
+$query_feedback = "SELECT f.*, o.user_id AS buyer_id, u.username, i.name AS item_name 
+                   FROM feedback f
                    JOIN orders o ON f.order_id = o.order_id
                    JOIN users u ON o.user_id = u.user_id
+                   JOIN order_items oi ON oi.order_id = o.order_id
+                   JOIN items i ON oi.item_id = i.item_id   -- Get item name from order_items and items
                    WHERE f.shop_id = ?
                    ORDER BY f.created_at DESC
                    LIMIT ? OFFSET ?";
 $stmt_feedback = $pdo->prepare($query_feedback);
 $stmt_feedback->execute([$shop['shop_id'], $limit, $offset]);
 $feedback = $stmt_feedback->fetchAll();
+
 
 // Fetch the total number of feedbacks to calculate pagination
 $query_total_feedback = "SELECT COUNT(*) FROM feedback WHERE shop_id = ?";
@@ -79,46 +83,78 @@ if (isset($_POST['moderate_feedback_id'])) {
 
 <?php include 'components/header.php'; ?>
 
-<main class="dashboard-content">
-    <h1>Manage Feedback</h1>
-    <div class="dashboard-content">
-        <h2>Feedback for Your Shop</h2>
+<main class="dashboard-content container py-4">
+    <h1 class="text-primary mb-4">Manage Feedback</h1>
+    <section class="feedback-section">
+        <h2 class="mb-4">Feedback for Your Shop</h2>
 
-        <?php if (isset($error)) { echo "<p class='error-message'>$error</p>"; } ?>
-        <?php if (isset($_GET['success'])) { echo "<p class='success-message'>{$_GET['success']}</p>"; } ?>
+        <!-- Error and Success Messages -->
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($_GET['success']) ?></div>
+        <?php endif; ?>
 
-        <ul>
+        <!-- Feedback List -->
+        <div class="feedback-list">
             <?php foreach ($feedback as $fb): ?>
-                <li>
-                    <strong>Buyer: <?= htmlspecialchars($fb['username']) ?> (Rating: <?= $fb['rating'] ?>/5)</strong><br>
-                    Comment: <?= htmlspecialchars($fb['comment']) ?><br>
-                    Date: <?= $fb['created_at'] ?><br>
+                <div class="feedback-card card mb-4">
+                    <div class="card-body">
+                        <div class="feedback-header mb-3">
+                            <h5 class="card-title">
+                                Buyer: <?= htmlspecialchars($fb['username']) ?>
+                                <span class="badge bg-primary">Rating: <?= $fb['rating'] ?>/5</span>
+                            </h5>
+                            <p class="card-text"><strong>Item:</strong> <?= htmlspecialchars($fb['item_name']) ?></p>
+                        </div>
+                        <p><strong>Comment:</strong> <?= htmlspecialchars($fb['comment']) ?></p>
+                        <p><strong>Date:</strong> <?= $fb['created_at'] ?></p>
 
-                    <!-- Option to delete feedback -->
-                    <a href="manage_feedback.php?delete_feedback_id=<?= $fb['feedback_id'] ?>" onclick="return confirm('Are you sure you want to delete this feedback?')">Delete Feedback</a>
+                        <!-- Seller's Response -->
+                        <?php if (!empty($fb['response'])): ?>
+                            <div class="seller-response mt-3 p-3 bg-light border rounded">
+                                <strong>Seller's Response:</strong>
+                                <p><?= htmlspecialchars($fb['response']) ?></p>
+                            </div>
+                        <?php endif; ?>
 
-                    <!-- Feedback moderation (response from seller) -->
-                    <form method="POST" action="manage_feedback.php" style="margin-top: 10px;">
-                        <input type="hidden" name="moderate_feedback_id" value="<?= $fb['feedback_id'] ?>">
-                        <textarea name="response" placeholder="Your response to this feedback (optional)"><?= $fb['response'] ?? '' ?></textarea><br>
-                        <button type="submit" class="btn">Respond to Feedback</button>
-                    </form>
-                </li>
-                <hr>
+                        <!-- Feedback Actions -->
+                        <div class="feedback-actions mt-4">
+                            <a href="manage_feedback.php?delete_feedback_id=<?= $fb['feedback_id'] ?>"
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this feedback?')">
+                                Delete Feedback
+                            </a>
+
+                            <!-- Feedback Response Form -->
+                            <form method="POST" action="manage_feedback.php" class="response-form mt-3">
+                                <input type="hidden" name="moderate_feedback_id" value="<?= $fb['feedback_id'] ?>">
+                                <textarea name="response" class="form-control mb-2" rows="3" placeholder="Your response to this feedback (optional)"><?= $fb['response'] ?? '' ?></textarea>
+                                <button type="submit" class="btn btn-primary btn-sm">Respond to Feedback</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             <?php endforeach; ?>
-        </ul>
+        </div>
 
         <!-- Pagination -->
-        <div class="pagination">
+        <div class="pagination d-flex justify-content-between align-items-center mt-4">
             <?php if ($page > 1): ?>
-                <a href="manage_feedback.php?page=<?= $page - 1 ?>">Previous</a>
+                <a href="manage_feedback.php?page=<?= $page - 1 ?>" class="btn btn-secondary btn-sm">Previous</a>
+            <?php else: ?>
+                <span></span>
             <?php endif; ?>
             <span>Page <?= $page ?> of <?= $total_pages ?></span>
             <?php if ($page < $total_pages): ?>
-                <a href="manage_feedback.php?page=<?= $page + 1 ?>">Next</a>
+                <a href="manage_feedback.php?page=<?= $page + 1 ?>" class="btn btn-secondary btn-sm">Next</a>
+            <?php else: ?>
+                <span></span>
             <?php endif; ?>
         </div>
-    </div>
+    </section>
 </main>
+
 
 <?php include 'components/footer.php'; ?>

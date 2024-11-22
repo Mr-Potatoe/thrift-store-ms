@@ -54,15 +54,7 @@ if (isset($_GET['delete_item'])) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Items</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Add your CSS file -->
-</head>
-<body>
+<?php include 'components/header.php'; ?>
     <h1>Manage Items</h1>
     
     <!-- Add New Item Form -->
@@ -138,5 +130,4 @@ if (isset($_GET['delete_item'])) {
             <?php endforeach; ?>
         </tbody>
     </table>
-</body>
-</html>
+    <?php include 'components/footer.php'; ?>

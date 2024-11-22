@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 21, 2024 at 03:04 PM
+-- Generation Time: Nov 22, 2024 at 05:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `toms`
+-- Database: `tel2`
 --
 
 -- --------------------------------------------------------
@@ -35,11 +35,6 @@ CREATE TABLE `cart` (
   `added_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `categories`
---
 
 CREATE TABLE `categories` (
   `category_id` int(11) NOT NULL,
@@ -47,27 +42,6 @@ CREATE TABLE `categories` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `disputes`
---
-
-CREATE TABLE `disputes` (
-  `dispute_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `issue` text NOT NULL,
-  `status` enum('open','in_progress','resolved','closed') DEFAULT 'open',
-  `resolution` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `feedback`
---
 
 CREATE TABLE `feedback` (
   `feedback_id` int(11) NOT NULL,
@@ -81,11 +55,6 @@ CREATE TABLE `feedback` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
--- --------------------------------------------------------
-
---
--- Table structure for table `items`
---
 
 CREATE TABLE `items` (
   `item_id` int(11) NOT NULL,
@@ -95,19 +64,11 @@ CREATE TABLE `items` (
   `description` text DEFAULT NULL,
   `condition` enum('excellent','good','fair') NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `auction` tinyint(1) DEFAULT 0,
-  `auction_end_time` datetime DEFAULT NULL,
   `quantity` int(11) DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `image` varchar(255) DEFAULT NULL
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
--- --------------------------------------------------------
-
---
--- Table structure for table `item_images`
---
 
 CREATE TABLE `item_images` (
   `image_id` int(11) NOT NULL,
@@ -115,11 +76,7 @@ CREATE TABLE `item_images` (
   `image_url` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `logs`
---
 
 CREATE TABLE `logs` (
   `log_id` int(11) NOT NULL,
@@ -128,11 +85,6 @@ CREATE TABLE `logs` (
   `log_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `orders`
---
 
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
@@ -144,11 +96,12 @@ CREATE TABLE `orders` (
   `order_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `order_items`
---
+
+INSERT INTO `orders` (`order_id`, `user_id`, `total_price`, `shipping_address`, `payment_status`, `order_status`, `order_date`) VALUES
+(12, 2, 871.00, 'ausauduasdu', 'pending', 'pending', '2024-11-22 02:57:16');
+
+
 
 CREATE TABLE `order_items` (
   `order_item_id` int(11) NOT NULL,
@@ -159,11 +112,12 @@ CREATE TABLE `order_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
--- --------------------------------------------------------
 
---
--- Table structure for table `payments`
---
+INSERT INTO `order_items` (`order_item_id`, `order_id`, `item_id`, `quantity`, `price`) VALUES
+(7, 12, 7, 7, 100.00),
+(8, 12, 8, 9, 19.00);
+
+
 
 CREATE TABLE `payments` (
   `payment_id` int(11) NOT NULL,
@@ -174,11 +128,6 @@ CREATE TABLE `payments` (
   `payment_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `payment_methods`
---
 
 CREATE TABLE `payment_methods` (
   `payment_method_id` int(11) NOT NULL,
@@ -186,11 +135,7 @@ CREATE TABLE `payment_methods` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `platform_settings`
---
 
 CREATE TABLE `platform_settings` (
   `setting_id` int(11) NOT NULL,
@@ -199,11 +144,6 @@ CREATE TABLE `platform_settings` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `shipping`
---
 
 CREATE TABLE `shipping` (
   `shipping_id` int(11) NOT NULL,
@@ -214,11 +154,6 @@ CREATE TABLE `shipping` (
   `shipping_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `shops`
---
 
 CREATE TABLE `shops` (
   `shop_id` int(11) NOT NULL,
@@ -229,11 +164,11 @@ CREATE TABLE `shops` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `users`
---
+INSERT INTO `shops` (`shop_id`, `user_id`, `shop_name`, `shop_description`, `shop_logo`, `created_at`) VALUES
+(2, 4, 'kevin shop', 'good shop', NULL, '2024-11-21 14:10:41');
+
+
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
@@ -248,13 +183,12 @@ CREATE TABLE `users` (
   `address` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `role`, `first_name`, `last_name`, `phone`, `created_at`, `address`) VALUES
 (1, 'admin ', '$2y$10$GkbM/rtCgILe9uo81c7iLuKe/nIWk/Mc1441QSh9XQhs3IR3JGVMS', 'admin@gmail.com', 'admin', NULL, NULL, NULL, '2024-11-21 00:56:29', NULL),
-(2, 'buyer1', '$2y$10$Vk1PGMqYtEfjCd6qgf/N7OlVGMYZD7H5ko8TYBOLJubeOJzObji0O', 'buyer@gmail.com', 'buyer', 'James', 'ried', '09776445', '2024-11-21 01:11:29', 'asd');
+(2, 'buyer1', '$2y$10$Vk1PGMqYtEfjCd6qgf/N7OlVGMYZD7H5ko8TYBOLJubeOJzObji0O', 'buyer@gmail.com', 'buyer', 'James', 'ried', '09776445', '2024-11-21 01:11:29', 'asd'),
+(4, 'seller1', '$2y$10$VxrwTvE.k1DOi8w7Mfr5L.MPPRm0yFqqsXLI3fmqY0Bau7psP1GhC', 'kevin@gmail.com', 'seller', 'kevin', 'eleven', '09776445908', '2024-11-21 14:10:41', NULL);
+
 --
 -- Indexes for dumped tables
 --
@@ -380,13 +314,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `disputes`
@@ -398,19 +332,19 @@ ALTER TABLE `disputes`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `item_images`
 --
 ALTER TABLE `item_images`
-  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `logs`
@@ -422,13 +356,13 @@ ALTER TABLE `logs`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -458,13 +392,13 @@ ALTER TABLE `shipping`
 -- AUTO_INCREMENT for table `shops`
 --
 ALTER TABLE `shops`
-  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `shop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

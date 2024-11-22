@@ -34,5 +34,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="name" required><br>
         <button type="submit">Create Category</button>
     </form>
-
     <?php include 'components/footer.php'; ?>

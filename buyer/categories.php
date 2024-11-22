@@ -13,19 +13,29 @@ $categories = $stmt->fetchAll();
 
 
 
-<section class="categories-section">
-    <h1 class="categories-title">Categories</h1>
-    <p class="categories-description">Shop quality second-hand items at affordable prices.</p>
-    <a href="categories.php" class="cta-button">View All Categories</a>
+<!-- Categories Section -->
+<section class="categories-section py-5">
+    <div class="container">
+        <h1 class="categories-title text-center mb-4">Categories</h1>
+        <p class="categories-description text-center mb-4">Shop quality second-hand items at affordable prices.</p>
 
-    <ul class="categories-list">
-        <?php foreach ($categories as $category): ?>
-            <li class="category-item">
-                <a href="search.php?category_id=<?= $category['category_id'] ?>" class="category-link"><?= $category['category_name'] ?></a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+        <div class="row">
+            <?php foreach ($categories as $category): ?>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card shadow-sm">
+                        <a href="search.php?category_id=<?= $category['category_id'] ?>" class="category-link text-decoration-none">
+                            <div class="card-body text-center">
+                                <h5 class="card-title"><?= htmlspecialchars($category['category_name']) ?></h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </section>
+
+
 
 
 

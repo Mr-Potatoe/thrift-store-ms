@@ -48,8 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $condition = $_POST['condition'];
     $price = $_POST['price'];
     $quantity = $_POST['quantity'];
-    $auction = isset($_POST['auction']) ? 1 : 0;
-    $auction_end_time = $_POST['auction_end_time'] ? $_POST['auction_end_time'] : NULL;
     $category_id = $_POST['category_id'];
 
     // Handle image upload
@@ -71,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update the main item in the database
     try {
-        $query_update = "UPDATE items SET name = ?, description = ?, `condition` = ?, price = ?, quantity = ?, auction = ?, auction_end_time = ?, category_id = ? WHERE item_id = ? AND shop_id = ?";
+        $query_update = "UPDATE items SET name = ?, description = ?, `condition` = ?, price = ?, quantity = ?, category_id = ? WHERE item_id = ? AND shop_id = ?";
         $stmt_update = $pdo->prepare($query_update);
-        $stmt_update->execute([$name, $description, $condition, $price, $quantity, $auction, $auction_end_time, $category_id, $item_id, $shop['shop_id']]);
+        $stmt_update->execute([$name, $description, $condition, $price, $quantity,  $category_id, $item_id, $shop['shop_id']]);
 
         // Redirect to the dashboard after successful update
         header("Location: dashboard.php");
@@ -92,83 +90,93 @@ $categories = $stmt_categories->fetchAll();
 
 <?php include 'components/header.php'; ?>
 
-<main class="dashboard-content">
+<main class="dashboard-content container py-4">
     <section class="dashboard-section">
-        <h1>Edit Item: <?= htmlspecialchars($item['name']) ?></h1>
+        <h1 class="text-primary mb-4">Edit Item: <?= htmlspecialchars($item['name']) ?></h1>
 
-        <?php if (isset($error)) {
-            echo "<p class='error-message'>$error</p>";
-        } ?>
+        <!-- Error Message -->
+        <?php if (isset($error)): ?>
+            <p class="alert alert-danger"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
+        <!-- Cancel Button -->
+        <a href="dashboard.php" class="btn btn-secondary mb-4">Cancel</a>
+
+        <!-- Edit Item Form -->
         <form method="POST" action="edit_item.php?item_id=<?= $item['item_id'] ?>" enctype="multipart/form-data" class="item-form">
 
-            <div class="form-group">
-                <label for="name">Item Name:</label>
-                <input type="text" name="name" id="name" value="<?= htmlspecialchars($item['name']) ?>" required placeholder="Enter item name">
+            <!-- Item Name -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Item Name:</label>
+                <input type="text" name="name" id="name" class="form-control" value="<?= htmlspecialchars($item['name']) ?>" required placeholder="Enter item name">
             </div>
 
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea name="description" id="description" required placeholder="Enter item description"><?= htmlspecialchars($item['description']) ?></textarea>
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea name="description" id="description" class="form-control" required rows="3" placeholder="Enter item description"><?= htmlspecialchars($item['description']) ?></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="condition">Condition:</label>
-                <select name="condition" id="condition" required>
+            <!-- Condition -->
+            <div class="mb-3">
+                <label for="condition" class="form-label">Condition:</label>
+                <select name="condition" id="condition" class="form-select" required>
                     <option value="excellent" <?= $item['condition'] == 'excellent' ? 'selected' : '' ?>>Excellent</option>
                     <option value="good" <?= $item['condition'] == 'good' ? 'selected' : '' ?>>Good</option>
                     <option value="fair" <?= $item['condition'] == 'fair' ? 'selected' : '' ?>>Fair</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="price">Price:</label>
-                <input type="number" name="price" id="price" value="<?= $item['price'] ?>" step="0.01" required placeholder="Enter price">
+            <!-- Price -->
+            <div class="mb-3">
+                <label for="price" class="form-label">Price:</label>
+                <input type="number" name="price" id="price" class="form-control" value="<?= $item['price'] ?>" step="0.01" required placeholder="Enter price">
             </div>
 
-            <div class="form-group">
-                <label for="quantity">Quantity:</label>
-                <input type="number" name="quantity" id="quantity" value="<?= $item['quantity'] ?>" required placeholder="Enter quantity">
+            <!-- Quantity -->
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" class="form-control" value="<?= $item['quantity'] ?>" required placeholder="Enter quantity">
             </div>
 
-            <div class="form-group">
-                <label for="auction">Auction:</label>
-                <input type="checkbox" name="auction" id="auction" <?= $item['auction'] ? 'checked' : '' ?>>
-                <span>Enable Auction</span>
-            </div>
-
-            <div class="form-group">
-                <label for="auction_end_time">Auction End Time:</label>
-                <input type="datetime-local" name="auction_end_time" id="auction_end_time" value="<?= $item['auction_end_time'] ?>">
-            </div>
-
-            <div class="form-group">
-                <label for="category_id">Category:</label>
-                <select name="category_id" id="category_id" required>
+            <!-- Category -->
+            <div class="mb-3">
+                <label for="category_id" class="form-label">Category:</label>
+                <select name="category_id" id="category_id" class="form-select" required>
                     <?php foreach ($categories as $category): ?>
-                        <option value="<?= $category['category_id'] ?>" <?= $category['category_id'] == $item['category_id'] ? 'selected' : '' ?>><?= htmlspecialchars($category['category_name']) ?></option>
+                        <option value="<?= $category['category_id'] ?>" <?= $category['category_id'] == $item['category_id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category['category_name']) ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="image">Item Image(s):</label><br>
+            <!-- Item Images -->
+            <div class="mb-3">
+                <label for="images" class="form-label">Item Image(s):</label><br>
                 <?php if ($item_images): ?>
-                    <div class="existing-images">
-                        <?php foreach ($item_images as $img): ?>
-                            <img src="../uploads/items/<?= htmlspecialchars($img['image_url']) ?>" alt="Item Image" width="100" height="100">
-                            <a href="delete_image.php?image_id=<?= $img['image_id'] ?>&item_id=<?= $item_id ?>" class="delete-image" onclick="return confirm('Are you sure you want to delete this image?')">Delete</a><br>
-                        <?php endforeach; ?>
+                    <div class="mb-3">
+                        <strong>Existing Images:</strong>
+                        <div class="row">
+                            <?php foreach ($item_images as $img): ?>
+                                <div class="col-4 col-md-2 mb-3">
+                                    <img src="../uploads/items/<?= htmlspecialchars($img['image_url']) ?>" alt="Item Image" class="img-fluid rounded">
+                                    <a href="delete_image.php?image_id=<?= $img['image_id'] ?>&item_id=<?= $item['item_id'] ?>"
+                                        class="btn btn-danger btn-sm mt-2 d-block"
+                                        onclick="return confirm('Are you sure you want to delete this image?')">Delete</a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
-                <input type="file" name="images[]" multiple>
+                <input type="file" name="images[]" id="images" class="form-control" accept="image/*" multiple>
             </div>
 
-            <button type="submit" class="btn">Save Changes</button>
+            <!-- Save Changes Button -->
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
-
-        <a href="dashboard.php" class="cancel-btn">Cancel</a>
     </section>
 </main>
+
 
 <?php include 'components/footer.php'; ?>

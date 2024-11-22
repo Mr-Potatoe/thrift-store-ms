@@ -16,10 +16,12 @@ $stmt = $pdo->prepare($query);
 $stmt->execute([$seller_id]);
 $shop = $stmt->fetch();
 
-// Fetch orders related to the seller
-$query_orders = "SELECT o.*, oi.*, i.name FROM orders o
+// Fetch orders related to the seller, including the buyer's name
+$query_orders = "SELECT o.*, oi.*, i.name AS item_name, u.first_name AS buyer_first_name, u.last_name AS buyer_last_name 
+                 FROM orders o
                  JOIN order_items oi ON o.order_id = oi.order_id
                  JOIN items i ON oi.item_id = i.item_id
+                 JOIN users u ON o.user_id = u.user_id
                  WHERE i.shop_id = ?";
 $stmt_orders = $pdo->prepare($query_orders);
 $stmt_orders->execute([$shop['shop_id']]);
@@ -74,38 +76,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_order'])) {
 } ?>
 
 <main class="dashboard-content">
-    <h1>Manage Orders</h1>
-    <section class="dashboard-section">
-        <h2>Orders</h2>
-        <ul>
-            <?php foreach ($orders as $order): ?>
-                <li class="order-card">
-                    <strong>Order ID: <?= $order['order_id'] ?></strong><br>
-                    Item: <?= $order['name'] ?><br>
-                    Quantity: <?= $order['quantity'] ?><br>
-                    Total Price: $<?= number_format($order['total_price'], 2) ?><br>
-                    Shipping Address: <?= htmlspecialchars($order['shipping_address']) ?><br>
-                    Payment Status: <?= ucfirst($order['payment_status']) ?><br>
-                    Order Status: <?= ucfirst($order['order_status']) ?><br>
-                    
-                    <!-- View Order Details Button -->
-                    <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn">View Order Details</a>
+    <!-- Page Title -->
+    <div class="container mt-5">
+        <h1 class="text-primary mb-4">Manage Orders</h1>
 
-                    <form method="POST" action="manage_orders.php">
-                        <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
-                        <label for="order_status">Order Status:</label>
-                        <select name="order_status" required>
-                            <option value="pending" <?= ($order['order_status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
-                            <option value="shipped" <?= ($order['order_status'] === 'shipped') ? 'selected' : '' ?>>Shipped</option>
-                            <option value="delivered" <?= ($order['order_status'] === 'delivered') ? 'selected' : '' ?>>Delivered</option>
-                            <option value="canceled" <?= ($order['order_status'] === 'canceled') ? 'selected' : '' ?>>Canceled</option>
-                        </select><br>
-                        <button type="submit" class="btn" name="update_order">Update Order Status</button>
-                    </form>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+        <!-- Orders Section -->
+        <section class="dashboard-section">
+            <h2>Orders</h2>
+            <div class="row">
+                <?php foreach ($orders as $order): ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <!-- Order Header -->
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <strong>Order ID: <?= $order['order_id'] ?></strong>
+                                <div class="order-status">
+                                    <span class="badge <?= $order['order_status'] === 'completed' ? 'bg-success' : 'bg-warning' ?>">
+                                        <?= ucfirst($order['order_status']) ?>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Order Details -->
+                            <div class="card-body">
+                                <p><strong>Item:</strong> <?= htmlspecialchars($order['item_name']) ?></p>
+                                <p><strong>Quantity:</strong> <?= $order['quantity'] ?></p>
+                                <p><strong>Total Price:</strong> PHP. <?= number_format($order['total_price'], 2) ?></p>
+                                <p><strong>Buyer:</strong> <?= htmlspecialchars($order['buyer_first_name']) ?> <?= htmlspecialchars($order['buyer_last_name']) ?></p>
+                                <p><strong>Shipping Address:</strong> <?= htmlspecialchars($order['shipping_address']) ?></p>
+                                <p><strong>Payment Status:</strong> <?= ucfirst($order['payment_status']) ?></p>
+                            </div>
+
+                            <!-- View Order Details Button -->
+                            <div class="card-footer text-end">
+                                <a href="view_order.php?order_id=<?= $order['order_id'] ?>" class="btn btn-primary">View Order Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </div>
 </main>
+
 
 <?php include 'components/footer.php'; ?>

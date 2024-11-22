@@ -62,22 +62,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include 'components/header.php'; ?>
 
-<section class="checkout-section">
-    <h1 class="checkout-title">Checkout</h1>
+<!-- Checkout Section -->
+<section class="checkout-section py-5">
+    <div class="container">
+        <h1 class="checkout-title text-center mb-4">Checkout</h1>
 
-    <?php if (isset($_SESSION['message'])): ?>
-        <div class="message"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['message'])): ?>
+            <div class="alert alert-info"><?= $_SESSION['message'];
+                                            unset($_SESSION['message']); ?></div>
+        <?php endif; ?>
 
-    <form method="POST" action="checkout.php" class="checkout-form">
-        <label for="shipping_address" class="checkout-label">Shipping Address:</label><br>
-        <textarea name="shipping_address" class="checkout-textarea" required></textarea><br>
+        <form method="POST" action="checkout.php" class="checkout-form">
+            <!-- Shipping Address -->
+            <div class="mb-4">
+                <label for="shipping_address" class="form-label">Shipping Address:</label>
+                <textarea name="shipping_address" id="shipping_address" class="form-control" required></textarea>
+            </div>
 
-        <label for="total_price" class="checkout-label">Total Price:</label><br>
-        <input type="text" name="total_price" class="checkout-input" required readonly value="<?= $total_price ?>"><br>
+            <!-- Total Price -->
+            <div class="mb-4">
+                <label for="total_price" class="form-label">Total Price:</label>
+                <input type="text" name="total_price" id="total_price" class="form-control" required readonly value="<?= $total_price ?>">
+            </div>
 
-        <button type="submit" class="checkout-button">Place Order</button>
-    </form>
+            <!-- Place Order Button -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary btn-lg">Place Order</button>
+            </div>
+        </form>
+    </div>
 </section>
+
 
 <?php include 'components/footer.php'; ?>
