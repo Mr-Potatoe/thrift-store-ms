@@ -9,96 +9,138 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+
+// Handle reorder request
+if (isset($_GET['reorder_order_id'])) {
+    $order_id = $_GET['reorder_order_id'];
+
+    try {
+        // Fetch items from the order
+        $order_items_query = "SELECT oi.item_id, oi.quantity, i.price 
+                              FROM order_items oi 
+                              JOIN items i ON oi.item_id = i.item_id 
+                              WHERE oi.order_id = ?";
+        $stmt_order_items = $pdo->prepare($order_items_query);
+        $stmt_order_items->execute([$order_id]);
+        $order_items = $stmt_order_items->fetchAll();
+
+        if ($order_items) {
+            foreach ($order_items as $item) {
+                // Check if the item is already in the cart
+                $check_cart_query = "SELECT quantity FROM cart WHERE user_id = ? AND item_id = ?";
+                $stmt_check_cart = $pdo->prepare($check_cart_query);
+                $stmt_check_cart->execute([$_SESSION['user_id'], $item['item_id']]);
+                $cart_item = $stmt_check_cart->fetch();
+
+                if ($cart_item) {
+                    // Update quantity if item is in the cart
+                    $update_cart_query = "UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND item_id = ?";
+                    $stmt_update_cart = $pdo->prepare($update_cart_query);
+                    $stmt_update_cart->execute([$item['quantity'], $_SESSION['user_id'], $item['item_id']]);
+                } else {
+                    // Insert item if not in the cart
+                    $add_to_cart_query = "INSERT INTO cart (user_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
+                    $stmt_add_to_cart = $pdo->prepare($add_to_cart_query);
+                    $stmt_add_to_cart->execute([$_SESSION['user_id'], $item['item_id'], $item['quantity'], $item['price']]);
+                }
+            }
+
+            // Redirect back with a success message
+            $_SESSION['success_message'] = "Order items added to your cart for reordering.";
+            header("Location: orders.php");
+            exit;
+        } else {
+            echo "No items found in the order to reorder.";
+        }
+    } catch (PDOException $e) {
+        echo "An error occurred: " . $e->getMessage();
+    }
+}
+
 // Check if order cancellation is requested
 if (isset($_GET['cancel_order_id'])) {
     $order_id = $_GET['cancel_order_id'];
 
-    // Get the current order status
-    $order_status_query = "SELECT order_status FROM orders WHERE order_id = ? AND user_id = ?";
-    $stmt_order_status = $pdo->prepare($order_status_query);
-    $stmt_order_status->execute([$order_id, $_SESSION['user_id']]);
-    $order = $stmt_order_status->fetch();
-    // Add items back to the cart
-    foreach ($order_items as $item) {
-        // First, check if the item is already in the cart
-        $check_cart_query = "SELECT quantity FROM cart WHERE user_id = ? AND item_id = ?";
-        $stmt_check_cart = $pdo->prepare($check_cart_query);
-        $stmt_check_cart->execute([$_SESSION['user_id'], $item['item_id']]);
-        $cart_item = $stmt_check_cart->fetch();
+    try {
+        // Begin a transaction to ensure consistency
+        $pdo->beginTransaction();
 
-        if ($cart_item) {
-            // If the item is already in the cart, update the quantity
-            $update_cart_query = "UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND item_id = ?";
-            $stmt_update_cart = $pdo->prepare($update_cart_query);
-            $stmt_update_cart->execute([$item['quantity'], $_SESSION['user_id'], $item['item_id']]);
-        } else {
-            // If the item is not in the cart, insert it
-            $add_to_cart_query = "INSERT INTO cart (user_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
-            $stmt_add_to_cart = $pdo->prepare($add_to_cart_query);
-            $stmt_add_to_cart->execute([$_SESSION['user_id'], $item['item_id'], $item['quantity'], $item['price']]);
-        }
-    }
-}
+        // Fetch items from the order
+        $order_items_query = "SELECT oi.item_id, oi.quantity, i.price 
+                              FROM order_items oi 
+                              JOIN items i ON oi.item_id = i.item_id 
+                              WHERE oi.order_id = ?";
+        $stmt_order_items = $pdo->prepare($order_items_query);
+        $stmt_order_items->execute([$order_id]);
+        $order_items = $stmt_order_items->fetchAll();
 
-// Check if reorder is requested
-if (isset($_GET['reorder_order_id'])) {
-    $order_id = $_GET['reorder_order_id'];
+        if ($order_items) {
+            foreach ($order_items as $item) {
+                // Check if the item is already in the cart
+                $check_cart_query = "SELECT quantity FROM cart WHERE user_id = ? AND item_id = ?";
+                $stmt_check_cart = $pdo->prepare($check_cart_query);
+                $stmt_check_cart->execute([$_SESSION['user_id'], $item['item_id']]);
+                $cart_item = $stmt_check_cart->fetch();
 
-    // Get items from the canceled order
-    $order_items_query = "SELECT oi.item_id, oi.quantity, i.price FROM order_items oi JOIN items i ON oi.item_id = i.item_id WHERE oi.order_id = ?";
-    $stmt_order_items = $pdo->prepare($order_items_query);
-    $stmt_order_items->execute([$order_id]);
-    $order_items = $stmt_order_items->fetchAll();
-
-    // Check if there are items to reorder
-    if ($order_items) {
-        // Add items back to the cart
-        foreach ($order_items as $item) {
-            // First, check if the item is already in the cart
-            $check_cart_query = "SELECT quantity FROM cart WHERE user_id = ? AND item_id = ?";
-            $stmt_check_cart = $pdo->prepare($check_cart_query);
-            $stmt_check_cart->execute([$_SESSION['user_id'], $item['item_id']]);
-            $cart_item = $stmt_check_cart->fetch();
-
-            if ($cart_item) {
-                // If the item is already in the cart, update the quantity
-                $update_cart_query = "UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND item_id = ?";
-                $stmt_update_cart = $pdo->prepare($update_cart_query);
-                $stmt_update_cart->execute([$item['quantity'], $_SESSION['user_id'], $item['item_id']]);
-            } else {
-                // If the item is not in the cart, insert it
-                $add_to_cart_query = "INSERT INTO cart (user_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
-                $stmt_add_to_cart = $pdo->prepare($add_to_cart_query);
-                $stmt_add_to_cart->execute([$_SESSION['user_id'], $item['item_id'], $item['quantity'], $item['price']]);
+                if ($cart_item) {
+                    // Update quantity if item is in the cart
+                    $update_cart_query = "UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND item_id = ?";
+                    $stmt_update_cart = $pdo->prepare($update_cart_query);
+                    $stmt_update_cart->execute([$item['quantity'], $_SESSION['user_id'], $item['item_id']]);
+                } else {
+                    // Insert item if not in the cart
+                    $add_to_cart_query = "INSERT INTO cart (user_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
+                    $stmt_add_to_cart = $pdo->prepare($add_to_cart_query);
+                    $stmt_add_to_cart->execute([$_SESSION['user_id'], $item['item_id'], $item['quantity'], $item['price']]);
+                }
             }
-        }
 
-        echo "Items added to your cart!";
-        header("Location: cart.php");
-        exit;
-    } else {
-        echo "No items found in this order to reorder.";
+            // Update the order status to 'canceled'
+            $cancel_order_query = "UPDATE orders SET order_status = 'canceled' WHERE order_id = ? AND user_id = ?";
+            $stmt_cancel_order = $pdo->prepare($cancel_order_query);
+            $stmt_cancel_order->execute([$order_id, $_SESSION['user_id']]);
+
+            if ($stmt_cancel_order->rowCount() > 0) {
+                // Commit the transaction
+                $pdo->commit();
+                echo "Order canceled and items added back to your cart.";
+                header("Location: orders.php");
+                exit;
+            } else {
+                // Rollback if order status update failed
+                $pdo->rollBack();
+                echo "Failed to cancel the order. Please try again.";
+            }
+        } else {
+            // Rollback if no items found in the order
+            $pdo->rollBack();
+            echo "No items found in the order to cancel.";
+        }
+    } catch (PDOException $e) {
+        // Rollback the transaction on error
+        $pdo->rollBack();
+        echo "An error occurred: " . $e->getMessage();
     }
 }
 
 // Get orders for the logged-in user along with feedback and seller's response
 $query = "
-   SELECT 
-    o.*, 
-    f.feedback_id, 
-    f.rating, 
-    f.comment AS feedback_comment, 
-    f.response AS seller_response, 
-    f.created_at AS feedback_date,
-    GROUP_CONCAT(DISTINCT s.shop_name SEPARATOR ', ') AS shop_names
-FROM orders o
-LEFT JOIN feedback f ON o.order_id = f.order_id
-LEFT JOIN order_items oi ON o.order_id = oi.order_id
-LEFT JOIN items i ON oi.item_id = i.item_id
-LEFT JOIN shops s ON i.shop_id = s.shop_id
-WHERE o.user_id = ?
-GROUP BY o.order_id
-ORDER BY o.order_date DESC";
+    SELECT 
+        o.*, 
+        f.feedback_id, 
+        f.rating, 
+        f.comment AS feedback_comment, 
+        f.response AS seller_response, 
+        f.created_at AS feedback_date,
+        GROUP_CONCAT(DISTINCT s.shop_name SEPARATOR ', ') AS shop_names
+    FROM orders o
+    LEFT JOIN feedback f ON o.order_id = f.order_id
+    LEFT JOIN order_items oi ON o.order_id = oi.order_id
+    LEFT JOIN items i ON oi.item_id = i.item_id
+    LEFT JOIN shops s ON i.shop_id = s.shop_id
+    WHERE o.user_id = ?
+    GROUP BY o.order_id
+    ORDER BY o.order_date DESC";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$_SESSION['user_id']]);
 $orders = $stmt->fetchAll();
