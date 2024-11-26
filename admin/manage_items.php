@@ -53,81 +53,113 @@ if (isset($_GET['delete_item'])) {
     exit();
 }
 ?>
-
 <?php include 'components/header.php'; ?>
-    <h1>Manage Items</h1>
-    
-    <!-- Add New Item Form -->
-    <h2>Add New Item</h2>
-    <form action="manage_items.php" method="POST">
-        <label for="name">Item Name:</label>
-        <input type="text" name="name" id="name" required><br>
 
-        <label for="description">Description:</label>
-        <textarea name="description" id="description" required></textarea><br>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Manage Items</h1>
 
-        <label for="price">Price:</label>
-        <input type="number" name="price" id="price" step="0.01" required><br>
+    <!-- Add New Item Button -->
+    <div class="text-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            Add New Item
+        </button>
+    </div>
 
-        <label for="quantity">Quantity:</label>
-        <input type="number" name="quantity" id="quantity" required><br>
-
-        <label for="category_id">Category:</label>
-        <select name="category_id" id="category_id" required>
-            <?php
-            // Fetch categories for the dropdown
-            $categoryQuery = "SELECT * FROM categories";
-            $categoryStmt = $pdo->query($categoryQuery);
-            while ($category = $categoryStmt->fetch(PDO::FETCH_ASSOC)) {
-                echo "<option value='{$category['category_id']}'>{$category['category_name']}</option>";
-            }
-            ?>
-        </select><br>
-
-        <label for="shop_id">Shop:</label>
-        <select name="shop_id" id="shop_id" required>
-            <?php
-            // Fetch shops for the dropdown
-            $shopQuery = "SELECT * FROM shops";
-            $shopStmt = $pdo->query($shopQuery);
-            while ($shop = $shopStmt->fetch(PDO::FETCH_ASSOC)) {
-                echo "<option value='{$shop['shop_id']}'>{$shop['shop_name']}</option>";
-            }
-            ?>
-        </select><br>
-
-        <button type="submit" name="add_item">Add Item</button>
-    </form>
+    <!-- Add New Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="manage_items.php" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Item Name</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" id="description" class="form-control" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" name="price" id="price" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" name="quantity" id="quantity" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label">Category</label>
+                            <select name="category_id" id="category_id" class="form-select" required>
+                                <?php
+                                $categoryQuery = "SELECT * FROM categories";
+                                $categoryStmt = $pdo->query($categoryQuery);
+                                while ($category = $categoryStmt->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<option value='{$category['category_id']}'>{$category['category_name']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shop_id" class="form-label">Shop</label>
+                            <select name="shop_id" id="shop_id" class="form-select" required>
+                                <?php
+                                $shopQuery = "SELECT * FROM shops";
+                                $shopStmt = $pdo->query($shopQuery);
+                                while ($shop = $shopStmt->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<option value='{$shop['shop_id']}'>{$shop['shop_name']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="add_item" class="btn btn-primary">Add Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Items List -->
-    <h2>Items List</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Category</th>
-                <th>Shop</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($items as $item): ?>
+    <h2 class="mb-4">Items List</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td><?php echo htmlspecialchars($item['name']); ?></td>
-                    <td><?php echo htmlspecialchars($item['description']); ?></td>
-                    <td><?php echo htmlspecialchars($item['price']); ?></td>
-                    <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                    <td><?php echo htmlspecialchars($item['category_name']); ?></td>
-                    <td><?php echo htmlspecialchars($item['shop_name']); ?></td>
-                    <td>
-                        <a href="edit_item.php?item_id=<?php echo $item['item_id']; ?>">Edit</a> |
-                        <a href="manage_items.php?delete_item=<?php echo $item['item_id']; ?>" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
-                    </td>
+                    <th>Item Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Category</th>
+                    <th>Shop</th>
+                    <th>Actions</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php include 'components/footer.php'; ?>
+            </thead>
+            <tbody>
+                <?php foreach ($items as $item): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($item['name']); ?></td>
+                        <td><?= htmlspecialchars($item['description']); ?></td>
+                        <td>₱<?= number_format($item['price'], 2); ?></td>
+                        <td><?= htmlspecialchars($item['quantity']); ?></td>
+                        <td><?= htmlspecialchars($item['category_name']); ?></td>
+                        <td><?= htmlspecialchars($item['shop_name']); ?></td>
+                        <td>
+                            <a href="edit_item.php?item_id=<?= $item['item_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="manage_items.php?delete_item=<?= $item['item_id']; ?>"
+                                onclick="return confirm('Are you sure you want to delete this item?')"
+                                class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<?php include 'components/footer.php'; ?>

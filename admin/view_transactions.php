@@ -31,40 +31,40 @@ $stmt->execute();
 $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
-
 <?php include 'components/header.php'; ?>
 
-    <h1>View Transactions</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Buyer</th>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Transaction Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($transactions as $transaction): ?>
+<div class="container my-5">
+    <h1 class="text-center mb-4">View Transactions</h1>
+
+    <!-- Transactions Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td><?php echo htmlspecialchars($transaction['buyer']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['item_name']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['quantity']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['total_price']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['transaction_date']); ?></td>
-                    <td>
-                        <a href="view_transaction_details.php?id=<?php echo $transaction['order_id']; ?>">View Details</a>
-                        <a href="resolve_dispute.php?id=<?php echo $transaction['order_id']; ?>">Resolve Dispute</a>
-                    </td>
+                    <th>Buyer</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Transaction Date</th>
+                    <th>Actions</th>
                 </tr>
-            <?php endforeach; ?>
+            </thead>
+            <tbody>
+                <?php foreach ($transactions as $transaction): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($transaction['buyer']); ?></td>
+                        <td><?= htmlspecialchars($transaction['item_name']); ?></td>
+                        <td><?= htmlspecialchars($transaction['quantity']); ?></td>
+                        <td>₱<?= number_format($transaction['total_price'], 2); ?></td>
+                        <td><?= htmlspecialchars($transaction['transaction_date']); ?></td>
+                        <td>
+                            <a href="view_transaction_details.php?id=<?= $transaction['order_id']; ?>" class="btn btn-info btn-sm">View Details</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-        </tbody>
-
-    </table>
-
-    
-    <?php include 'components/footer.php'; ?>
-
+<?php include 'components/footer.php'; ?>

@@ -33,33 +33,47 @@ $query = "SELECT * FROM categories";
 $stmt = $pdo->query($query);
 ?>
 <?php include 'components/header.php'; ?>
-<h1>Manage Categories</h1>
 
-<!-- Add category form -->
-<form method="POST">
-    <input type="text" name="category_name" placeholder="Category Name" required>
-    <button type="submit" name="add_category">Add Category</button>
-</form>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Manage Categories</h1>
 
-<!-- Categories list -->
-<table>
-    <thead>
-        <tr>
-            <th>Category Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php while ($category = $stmt->fetch()): ?>
-        <tr>
-            <td><?= $category['category_name'] ?></td>
-            <td>
-                <a href="categories.php?edit=<?= $category['category_id'] ?>">Edit</a> |
-                <a href="categories.php?delete=<?= $category['category_id'] ?>">Delete</a>
-            </td>
-        </tr>
-        <?php endwhile; ?>
-    </tbody>
-</table>
+    <!-- Add Category Form -->
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            <form method="POST" class="row g-3">
+                <div class="col-md-9">
+                    <input type="text" name="category_name" class="form-control" placeholder="Category Name" required>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" name="add_category" class="btn btn-primary w-100">Add Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Categories List -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Category Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($category = $stmt->fetch()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($category['category_name']) ?></td>
+                        <td>
+                            <a href="categories.php?edit=<?= $category['category_id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="categories.php?delete=<?= $category['category_id'] ?>" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this category?')">Delete</a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <?php include 'components/footer.php'; ?>

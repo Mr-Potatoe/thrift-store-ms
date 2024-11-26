@@ -1,10 +1,43 @@
-/* styles.css */
+/* General Styles */
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    display: flex;
+    flex-direction: column; /* Enable flex layout */
+    min-height: 100vh; /* Ensure the page takes full viewport height */
+}
+
+/* Main Content Area */
+.container {
+    flex: 1; /* Ensures content stretches to push footer down */
+}
+
+/* Footer */
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    margin-top: auto; /* Ensures footer stays at the bottom */
+}
+
+.footer a {
+    color: #ffcc00;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #fff;
+}
 
 /* Navbar */
 nav ul {
     list-style-type: none;
     padding: 0;
     text-align: center;
+    margin: 0;
 }
 
 nav ul li {
@@ -15,18 +48,4 @@ nav ul li {
 nav ul li a {
     text-decoration: none;
     color: #333;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #f1f1f1;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
-footer p {
-    margin: 0;
 }

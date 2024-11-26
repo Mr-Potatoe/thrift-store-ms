@@ -34,20 +34,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php include 'components/header.php'; ?>
-<h1>Create New User</h1>
-<form method="POST" action="create_user.php">
-    <label for="username">Username:</label>
-    <input type="text" name="username" required><br>
-    <label for="email">Email:</label>
-    <input type="email" name="email" required><br>
-    <label for="password">Password:</label>
-    <input type="password" name="password" required><br>
-    <label for="role">Role:</label>
-    <select name="role" required>
-        <option value="admin">Admin</option>
-        <option value="seller">Seller</option>
-        <option value="buyer">Buyer</option>
-    </select><br>
-    <button type="submit">Create User</button>
-</form>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Create New User</h1>
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="POST" action="create_user.php">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Enter username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter email address" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <select name="role" id="role" class="form-select" required>
+                        <option value="" disabled selected>Select a role</option>
+                        <option value="admin">Admin</option>
+                        <option value="seller">Seller</option>
+                        <option value="buyer">Buyer</option>
+                    </select>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                    <a href="manage_users.php" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <?php include 'components/footer.php'; ?>

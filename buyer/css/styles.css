@@ -15,6 +15,26 @@ body {
   flex-direction: column;
 }
 
+
+/* Footer */
+.footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  margin-top: auto; /* Ensures footer stays at the bottom */
+}
+
+.footer a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #fff;
+}
+
+
 /* Navbar */
 .navbar {
   background-color: #333;
@@ -166,24 +186,6 @@ body {
 /* Main content should grow to fill available space */
 .main-content {
   flex-grow: 1;
-}
-
-/* Footer */
-.footer {
-  background-color: #333;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-  margin-top: auto; /* Ensures footer stays at the bottom */
-}
-
-.footer a {
-  color: #ffcc00;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  color: #fff;
 }
 
 /* Optional: Hover effect on order items */
